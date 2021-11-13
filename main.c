@@ -2,7 +2,6 @@
 #include <avr/interrupt.h>
 
 #define F_CPU 128000L
-//#define F_CPU 1000000L
 
 #include <util/delay.h>
 #include <avr/sleep.h>
@@ -66,13 +65,10 @@ uint8_t SetTimersPWM()
     TCCR0B |= (1 << CS00) ;     // Set Timer 0 prescaler to clock. At 1 MHz this is 125 kHz.    
     TCCR0A = (1 << WGM01) | (1 << WGM00) | (1 << COM0B1) | (1 << COM0A1) | (1 << COM0B0) | (1 << COM0A0);  // Set to 'Fast PWM' mode, Set OC0B and OC0A output on compare match, upwards counting.
     
-    /*TCCR0A = 2 << COM0A0 | 2 << COM0B0 | 3 << WGM00;
-    TCCR0B = 0 << WGM02  | 1 << CS00;
-    TCCR1  = 0 << PWM1A  | 0 << COM1A0 | 1 << CS10;
-    GTCCR  = 1 << PWM1B  | 2 << COM1B0;*/
     return 1;
 }
 
+/*
 uint8_t Conso()
 {
     ADCSRA &= ~(1 << ADEN);       // disable the ADC
@@ -81,6 +77,7 @@ uint8_t Conso()
     ACSR|=(1<<ACD);               // Turn off Analog comparator.    
     return 1;
 }
+*/
 
 int main(void)
 {    
@@ -93,7 +90,6 @@ int main(void)
     uint8_t indexYe = 0;
     uint8_t indexOr = 99;
     
-    //const uint8_t list_pwm[20] = {20, 210, 150, 70, 180, 250, 110, 50, 130, 220, 200, 210, 190, 220, 150, 100, 70, 90, 35, 90};
     const uint8_t list_pwm[100] = {223,236,205,255,237,236,214,229,242,222,213,222,
                                    217,209,238,254,230,220,218,233,220,213,233,211,
                                    222,240,245,220,208,214,231,206,229,221,234,229,
@@ -112,28 +108,8 @@ int main(void)
     
     uint8_t ajustement = 0;
     
-
-    //OCR0A = 0x88;
     while (1)
-    {
-        /*PORTB &= ~(1 << PB4);
-        PORTB |= (1 << PB3);
-        _delay_ms(1000);
-        PORTB |= (1 << PB4);
-        PORTB &= ~(1 << PB3);
-        _delay_ms(1000);
-        */
-        /*
-        _delay_ms(5000);
-        power_all_disable();
-        _delay_ms(5000);
-        set_sleep_mode(SLEEP_MODE_PWR_DOWN);
-        sleep_mode();
-        */
-        // turn off LED
-        //PORTB &= ~(1 << PB4);
-        //PORTB |= (1 << PB3);
-        
+    {                
         if(FLAGS)
         {
             FLAGS = 0;
@@ -148,10 +124,7 @@ int main(void)
             {
                 indexYe++;
                 indexOr--; 
-            }
-            
-            //ajustement = 255U - list_pwm[indexYe];
-            //ajustement /= 2U;
+            }                        
             
             OCR0A = list_pwm[indexYe];
             OCR0B = list_pwm[indexOr];            
@@ -176,11 +149,8 @@ int main(void)
             {
                 toilet_idx++;
             }
-        }               
-        
-        // now set it to state of led flag
-        //PORTB |= ((FLAGS >> FLED) & 1) << PB4;
-        //PORTB |= (~(FLAGS >> FLED) & 1) << PB3;
+        }                      
+
         _delay_ms(10);
         
     }
